@@ -26,16 +26,18 @@ creacion =(f"1.-Colocar una canaleta en el borde del techo para recolectar el ag
     f"5.-Al final del canal, instalar un filtro casero con capas de grava, arena y carbón activado dentro de una botella cortada\n"
     f"6.-El agua filtrada cae directamente en un tinaco o depósito reciclado con tapa y válvula de salida.\n")
 
-# Datos iniciales Chalco para area y volumen
+# Datos iniciales para area, volumen y lluvia anual en Chalco
 medida_enfrente = 44.33 # m
 medida_atras = 46.7 # m
 medida_lado_izquierdo = 94.37 # m
 medida_lado_derecho = 94.48 # m
 area = (((medida_enfrente + medida_atras) / 2) * ((medida_lado_izquierdo + medida_lado_derecho) / 2)) # m2
-lluvia_anual_chalco = 583.3 # mm
+lluvia_anual_chalco = 583.3 # mm anual historico
 lluvia_anual = lluvia_anual_chalco / 1000 # Convertir mm a m3
-coeficiente = 0.9
-volumen = area * lluvia_anual * coeficiente
+coeficiente = 0.9 #ks
+volumen = area * lluvia_anual * coeficiente # m3 volumen anual utilizable de agua pluvial sin descarte
+# Calculo del primer descarte de lluvia para limpieza del techo
+descarte_mm_valor = 5 / 1000  # Descarte de 5 mm en metros
 
 # Función para la verificación de material reunido para contruir el sistema de captación
 print("Verificar si contamos con los materiales para captación de agua pluvial...")
@@ -47,7 +49,7 @@ def verificar_material():
             print("Como siguiente paso es crear el sistema de captación de agua pluvial con los materiales reunidos.")
             print("Pasos a seguir:\n")
             print(creacion) # Se llama la variable creacion con uso de print
-            pasos_completados() # Función activada e inicio de esta
+            verificar_pasos_completados() # Función activada e inicio de esta
             break #Termina el bucle actual
         elif material_respuesta == 'no':
             print(f"\n¡Revisa que materiales requeridos te hacen falta para crear el sistema!\n")
@@ -57,12 +59,12 @@ def verificar_material():
             continue # Vuelve a iniciar el ciclo actual 
 
 # Función para la verificacion de contrucción del sistema de captación de agua conforme a los pasos dados
-def pasos_completados():
+def verificar_pasos_completados():
     while True:
         pasos_completados = input(f"¿Se completo con exito la pasos para creación del sistema de captación de agua pluvial? (Si/No)\n")
         if pasos_completados == 'si' or pasos_completados == 'si':
             print("\n¡Genial! ¡Tienes un sistema de captación de agua pluvia listo para funcionar!\n")
-            porcentaje_area()    # Función activada e inicio de esta
+            calcular_volumen_area() # Función activada e inicio de esta
             break #Termina el bucle actual
         elif pasos_completados == 'no':
             print(f"\nSistema de captacion de agua pluvial no contruido.")
@@ -71,26 +73,29 @@ def pasos_completados():
             print("\n\n¡Respuesta invalida!\n Solo 'si' o 'no'.")
             continue # Vuelve a iniciar el ciclo actual
 
- # Funcion para el calcular un porcentaje del area y volumen de agua pluvial que se puede captar de la UNRC Chalco      
-def porcentaje_area():
-    print("\nAhora veremos el area y volumen de agua pluvial que se puede captar anualmenteen en la UNRC Chalco.")
+
+# Funcion para el calcular un porcentaje del area y volumen de agua pluvial que se puede captar de la UNRC Chalco      
+def calcular_volumen_area():
+    print("\nAhora veremos el area y volumen de agua pluvial que se puede captar en la UNRC Chalco.")
     print(f"   Area total de superficie de la UNRC Chalco es de: {area: .2f} m²")
     print(f"   Volumen total que se puede captar es de: {volumen: .2f} M³\n")
+    
     while True:
         print("Ahora ingrese el porcentaje de area de superficie a captar.") 
-        porcentaje_piloto = float(input("Ingrese el porcentaje de área de superficie a captar (ej. 5 para 5%): "))
-        if 0 < porcentaje_piloto <= 100:
-            area_captada = area * (porcentaje_piloto / 100)
-            volumen_piloto = area_captada * lluvia_anual * coeficiente
-            print(f"\nUtilizando un {porcentaje_piloto}% del area de la UNRC obtendriamos: {area_captada:.2f} m² = {volumen_piloto:.2f} m³ de agua captada anualmente\n")
-            calcular_capacidad(volumen_piloto=volumen_piloto, porcentaje_piloto=porcentaje_piloto) # Función activada e inicio de esta
+        area_seleccionado = float(input("Ingrese el porcentaje de área de superficie a captar (ej. 5 para 5%): "))
+        
+        if 0 < area_seleccionado <= 100:
+            area_captada = area * (area_seleccionado / 100) # m2
+            volumen_modificado = area_captada * lluvia_anual * coeficiente
+            print(f"\nUtilizando un {area_seleccionado}% del area de la UNRC obtendriamos: {area_captada:.2f} m² = {volumen_modificado:.2f} m³ de agua captada\n")
+            calcular_capacidad_pet(area_captada=area_captada, volumen_piloto=volumen_modificado, porcentaje_piloto=area_seleccionado) # Función activada e inicio de esta ademas de llamar variables
             break
         else:
             print("Porcentaje debe estar entre 0 y 100.")
             continue # Vuelve a iniciar el ciclo actual
-                 
+
 # Funcion para el calculo aproximado de almacenamiento de agua pluvial
-def calcular_capacidad(volumen_piloto, porcentaje_piloto):
+def calcular_capacidad_pet(area_captada, volumen_piloto, porcentaje_piloto):
     print("Ahora veremos cuantos litros de capacidad obtendremos de acuerdo al tamaño de botella utilizado y parte del area de la UNRC Chalco, ingrese los datos.")   
     print("\nOpciones de módulos para almacenamiento con PET:\n")
     print("1. Botellas de 2.5 Litros.")
@@ -108,36 +113,65 @@ def calcular_capacidad(volumen_piloto, porcentaje_piloto):
             print("\nOpción inválida.\nSolo ingresa 1 o 2.")
             continue # Vuelve a iniciar el ciclo actual      
         capacidad_final = capacidad_litros
+        capacidad_m3 = capacidad_final / 1000  # Convertir litros a m3
         volumen_estimado = volumen_piloto /( capacidad_final/100)        
         print(f"\nDatos de Capacidad del Sistema de captación de agua pluvial:")
         print(f"   Botellas utilizados: {num_modulos}")
         print(f"   Capacidad total estimado: {capacidad_final} litros.")
-        print(f"\n¡Genial! ¡Tienes un sistema con una capacidad de {capacidad_final} litros para almacenamiento de agua pluvial!\n")
-        print(f'**Como recomendación del sistema de captación construido y el porcentaje de area seleccionado y aprovechar los {volumen_piloto:.2f}m³ que se puede captar anualmente se necesitan aproximadamente de {volumen_estimado: .0f} modulos para ese {porcentaje_piloto: .0f}% de superficie que se quiere utilizar.**\n')
+        print(f"\n¡Genial! ¡Tienes un sistema con una capacidad de {capacidad_final} litros ({capacidad_m3} m³) para almacenamiento de agua pluvial!\n")
+        print(f'**Como recomendación del sistema de captación construido y el porcentaje de area seleccionado y aprovechar los {volumen_piloto:.2f}m³ que se puede captar se necesitan aproximadamente de {volumen_estimado: .0f} modulos para ese {porcentaje_piloto: .0f}% de superficie disponible.**\n')
         
-        llueve() # Función activada e inicio de esta
+        verificar_descarte(volumen_piloto=volumen_piloto, area_captada=area_captada, capacidad_m3=capacidad_m3)  # Función activada e inicio de esta
         break
 
-
-def llueve():
+#Funcion para verificar primer descarte de lluvia para limpieza del techo
+def verificar_descarte(volumen_piloto, area_captada, capacidad_m3):
     while True:
-        print("Finalmente para que funcione el sistema de captacion pluvial funcione se debe confirmar si llueve.")
+        descarte_respuesta = input(f"¿Desea considerar el primer descarte de lluvia de 5 mm para limpieza del techo? (Si/No)\n")
+        if descarte_respuesta == 'si' or descarte_respuesta == 'si':
+            area_deseado = area_captada * descarte_mm_valor
+            descarte_lluvia = volumen_piloto - area_deseado
+            tienes_pocentaje = capacidad_m3 / descarte_lluvia * 100 
+            print(f"\nConsiderando un primer lavado del techo con 5 mm de lluvia, el volumen útil de captación pluvial es de {descarte_lluvia:.2f} m³.")
+            print(f"Actualmente, el sistema de almacenamiento construido tiene una capacidad de {capacidad_m3:.2f} m³ para una superficie de {area_captada:.2f}m².\n")
+            print(f'"El primer descarte de lluvia ayuda a mantener el sistema limpio y eficiente cada vez que llueve"')
+            print(f"      ¡Tienes aproximadamente {tienes_pocentaje:.2f}% del volumen captable.!\n")
+            verificar_lluvia() # Función activada e inicio de esta
+            break #Termina el bucle actual
+        elif descarte_respuesta == 'no':
+            print(f"\nNo se considerando un primer lavado del techo con 5 mm de lluvia, el volumen útil de captación pluvial es de {volumen_piloto:.2f} m³\n")
+            print(f"Actualmente, el sistema de almacenamiento construido tiene una capacidad de {capacidad_m3:.2f} m³ para una superficie de {area_captada:.2f}m².\n")
+            print(f'"El primer descarte de lluvia ayuda a mantener el sistema limpio y eficiente cada vez que llueve"')
+            print(f"      ¡Tienes aproximadamente {tienes_pocentaje:.2f}% del volumen captable.!\n")
+            verificar_lluvia() # Función activada e inicio de esta            
+            break #Termina el bucle actual
+        else:
+            print("\n\n¡Respuesta invalida!\n Solo 'si' o 'no'.")
+            continue # Vuelve a iniciar el ciclo actual
+
+# Funcion para verificar si llueve y el sistema de captación pluvial funciona
+def verificar_lluvia():
+    while True:
+        print("Finalmente para que funcione el sistema de captacion pluvial y empezar a monitorear confirmar si llueve.")
         lluvia = input(f"¿Esta lloviendo en la UNRC? (Si/No)\n")
         if lluvia == 'si' or lluvia == 'si':
             print(f"\nEl sistema se activa...\n\n"
-            f"El agua llega a traves a traves de los canales construidos\n"
-            f"¡Genial! ¡El agua se almacena en el deposito!\n\n"
+            f"El agua de lluvia es dirigida desde el techo a través de las canaletas hacia las botellas PET ensambladas en la pared.\n"
+            f"El agua pasa por el filtro primario que retiene hojas y residuos grandes.\n"
+            f"El agua continúa su camino a través del tubo de bajada hacia el filtro secundario que purifica el agua.\n"      
+            f"¡Genial! ¡El agua limpia se almacena en el deposito listo para su uso!\n\n"
             f"El agua recolectada se podria usar para:\n"
             f"Riego de plantas, Limpeza de salones y patio, Uso sanitario\n\n"
             f"Se debe dar mantenimiento al sistema; monitorearlo, limpiarlo, cambiar filtros, etc\n"
-            f'"Condicion sana, buena eficiencia"')                        
+            f'"Condicion sana, buena eficiencia"')
+                                 
             break #Termina el bucle actual
         elif lluvia == 'no':
             print(f"\nEsperar a que llueva y poder monitorear.\n")
             print(f'"Sin lluvia no hay recolección y monitoreo"')
             break #Termina el bucle actual          
         else:
-            print("\n\n¡Respuesta invalida!\n Solo 'si' o 'no'.")
+            print("\n¡Respuesta invalida!\n Solo 'si' o 'no'.")
             continue # Vuelve a iniciar el ciclo actual
 verificar_material() # Función activada e inicio de esta
 # Fin
