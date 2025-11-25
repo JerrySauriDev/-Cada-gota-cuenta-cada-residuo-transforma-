@@ -8,8 +8,8 @@ medida_lado_derecho = 94.48 # m
 area = (((medida_enfrente + medida_atras) / 2) * ((medida_lado_izquierdo + medida_lado_derecho) / 2)) # m2
 lluvia_anual_chalco = 583.3 # mm
 lluvia_anual = lluvia_anual_chalco / 1000 # Convertir mm a m3
-coeficiente = 0.9
-volumen = area * lluvia_anual * coeficiente
+coeficiente = 0.9 #ks
+volumen = area * lluvia_anual * coeficiente # m3
 
 
 
