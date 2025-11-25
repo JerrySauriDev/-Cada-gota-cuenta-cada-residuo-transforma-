@@ -26,17 +26,16 @@ creacion =(f"1.-Colocar una canaleta en el borde del techo para recolectar el ag
     f"5.-Al final del canal, instalar un filtro casero con capas de grava, arena y carbón activado dentro de una botella cortada\n"
     f"6.-El agua filtrada cae directamente en un tinaco o depósito reciclado con tapa y válvula de salida.\n")
 
-# Datos iniciales para area, volumen y lluvia anual en Chalco
+# Datos obtenidos para calcular el area, volumen en en la UNRC Chalco
 medida_enfrente = 44.33 # m
 medida_atras = 46.7 # m
 medida_lado_izquierdo = 94.37 # m
 medida_lado_derecho = 94.48 # m
 area = (((medida_enfrente + medida_atras) / 2) * ((medida_lado_izquierdo + medida_lado_derecho) / 2)) # m2
-lluvia_anual_chalco = 583.3 # mm anual historico
+lluvia_anual_chalco = 583.3 # mm anual historico de lluvia en Chalco
 lluvia_anual = lluvia_anual_chalco / 1000 # Convertir mm a m3
-coeficiente = 0.9 #ks
+coeficiente = 0.9 # ks
 volumen = area * lluvia_anual * coeficiente # m3 volumen anual utilizable de agua pluvial sin descarte
-# Calculo del primer descarte de lluvia para limpieza del techo
 descarte_mm_valor = 5 / 1000  # Descarte de 5 mm en metros
 
 # Función para la verificación de material reunido para contruir el sistema de captación
@@ -127,27 +126,27 @@ def calcular_capacidad_pet(area_captada, volumen_piloto, porcentaje_piloto):
 #Funcion para verificar primer descarte de lluvia para limpieza del techo
 def verificar_descarte(volumen_piloto, area_captada, capacidad_m3):
     while True:
+        area_deseado = area_captada * descarte_mm_valor
+        descarte_lluvia = volumen_piloto - area_deseado
+        tienes_pocentaje = capacidad_m3 / descarte_lluvia * 100
         descarte_respuesta = input(f"¿Desea considerar el primer descarte de lluvia de 5 mm para limpieza del techo? (Si/No)\n")
         if descarte_respuesta == 'si' or descarte_respuesta == 'si':
-            area_deseado = area_captada * descarte_mm_valor
-            descarte_lluvia = volumen_piloto - area_deseado
-            tienes_pocentaje = capacidad_m3 / descarte_lluvia * 100 
             print(f"\nConsiderando un primer lavado del techo con 5 mm de lluvia, el volumen útil de captación pluvial es de {descarte_lluvia:.2f} m³.")
             print(f"Actualmente, el sistema de almacenamiento construido tiene una capacidad de {capacidad_m3:.2f} m³ para una superficie de {area_captada:.2f}m².\n")
             print(f'"El primer descarte de lluvia ayuda a mantener el sistema limpio y eficiente cada vez que llueve"')
             print(f"      ¡Tienes aproximadamente {tienes_pocentaje:.2f}% del volumen captable.!\n")
-            verificar_lluvia() # Función activada e inicio de esta
-            break #Termina el bucle actual
+
         elif descarte_respuesta == 'no':
             print(f"\nNo se considerando un primer lavado del techo con 5 mm de lluvia, el volumen útil de captación pluvial es de {volumen_piloto:.2f} m³\n")
             print(f"Actualmente, el sistema de almacenamiento construido tiene una capacidad de {capacidad_m3:.2f} m³ para una superficie de {area_captada:.2f}m².\n")
             print(f'"El primer descarte de lluvia ayuda a mantener el sistema limpio y eficiente cada vez que llueve"')
-            print(f"      ¡Tienes aproximadamente {tienes_pocentaje:.2f}% del volumen captable.!\n")
-            verificar_lluvia() # Función activada e inicio de esta            
-            break #Termina el bucle actual
+            print(f"     ¡Tienes aproximadamente {tienes_pocentaje:.2f}% del volumen captable.!\n")      
+            
         else:
             print("\n\n¡Respuesta invalida!\n Solo 'si' o 'no'.")
             continue # Vuelve a iniciar el ciclo actual
+        verificar_lluvia() # Función activada e inicio de esta
+        break #Termina el bucle actual
 
 # Funcion para verificar si llueve y el sistema de captación pluvial funciona
 def verificar_lluvia():
