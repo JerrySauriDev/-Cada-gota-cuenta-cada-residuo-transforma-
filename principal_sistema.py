@@ -42,7 +42,7 @@ descarte_mm_valor = 5 / 1000  # Descarte de 5 mm en metros
 print("Verificar si contamos con los materiales para captación de agua pluvial...")
 def verificar_material():
     while True:
-        material_respuesta = input(f"¿Tienes todos los materiales? (Si/No)\n")
+        material_respuesta = input(f"¿Tienes todos los materiales? (Si/No)\n") 
         if material_respuesta == 'si' or material_respuesta == 'si':
             print("\n¡Genial! ¡Tienes todos los materiales necesarios!\n")
             print("Como siguiente paso es crear el sistema de captación de agua pluvial con los materiales reunidos.")
@@ -76,13 +76,13 @@ def verificar_pasos_completados():
 # Funcion para el calcular un porcentaje del area y volumen de agua pluvial que se puede captar de la UNRC Chalco      
 def calcular_volumen_area():
     print("\nAhora veremos el area y volumen de agua pluvial que se puede captar en la UNRC Chalco.")
-    print(f"   Area total de superficie de la UNRC Chalco es de: {area: .2f} m²")
-    print(f"   Volumen total que se puede captar es de: {volumen: .2f} M³\n")
+    print(f"   Area total de superficie de la UNRC Chalco es de: {area: .2f} m²") # se llama la variable de area m2 de la unidad UNRC
+    print(f"   Volumen total que se puede captar es de: {volumen: .2f} M³\n") # se llama la variable del volumen calculado 
     
     while True:
         print("Ahora ingrese el porcentaje de area de superficie a captar.") 
         area_seleccionado = float(input("Ingrese el porcentaje de área de superficie a captar (ej. 5 para 5%): "))
-        
+        # Operacion de calculo de area y volumen con el porcentaje ingresado
         if 0 < area_seleccionado <= 100:
             area_captada = area * (area_seleccionado / 100) # m2
             volumen_modificado = area_captada * lluvia_anual * coeficiente
@@ -93,13 +93,13 @@ def calcular_volumen_area():
             print("Porcentaje debe estar entre 0 y 100.")
             continue # Vuelve a iniciar el ciclo actual
 
-# Funcion para el calculo aproximado de almacenamiento de agua pluvial
+# Funcion para el calculo aproximado de almacenamiento de agua pluvial y lladmado de variables de otra funcion
 def calcular_capacidad_pet(area_captada, volumen_piloto, porcentaje_piloto):
     print("Ahora veremos cuantos litros de capacidad obtendremos de acuerdo al tamaño de botella utilizado y parte del area de la UNRC Chalco, ingrese los datos.")   
     print("\nOpciones de módulos para almacenamiento con PET:\n")
     print("1. Botellas de 2.5 Litros.")
     print("2. Botellas de 3 Litros.")   
-    while True:           
+    while True:       # Bucle para seleccionar tamaño de botella y numero de modulos
         tamaño_botella = input("Seleccione el tipo de botella usado (1 o 2): ")
         num_modulos = int(input("Ingrese el número total de botellas interconectados: "))
         if tamaño_botella == '1' or tamaño_botella =='1':  # Botellas de 2.75 litros por botella PET
@@ -115,7 +115,7 @@ def calcular_capacidad_pet(area_captada, volumen_piloto, porcentaje_piloto):
         capacidad_m3 = capacidad_final / 1000  # Convertir litros a m3
         volumen_estimado = volumen_piloto /( capacidad_final/100)        
         print(f"\nDatos de Capacidad del Sistema de captación de agua pluvial:")
-        print(f"   Botellas utilizados: {num_modulos}")
+        print(f"   Botellas utilizados: {num_modulos}") 
         print(f"   Capacidad total estimado: {capacidad_final} litros.")
         print(f"\n¡Genial! ¡Tienes un sistema con una capacidad de {capacidad_final} litros ({capacidad_m3} m³) para almacenamiento de agua pluvial!\n")
         print(f'**Como recomendación del sistema de captación construido y el porcentaje de area seleccionado y aprovechar los {volumen_piloto:.2f}m³ que se puede captar se necesitan aproximadamente de {volumen_estimado: .0f} modulos para ese {porcentaje_piloto: .0f}% de superficie disponible.**\n')
@@ -125,9 +125,10 @@ def calcular_capacidad_pet(area_captada, volumen_piloto, porcentaje_piloto):
 
 #Funcion para verificar primer descarte de lluvia para limpieza del techo
 def verificar_descarte(volumen_piloto, area_captada, capacidad_m3):
-    while True:
-        area_deseado = area_captada * descarte_mm_valor
-        descarte_lluvia = volumen_piloto - area_deseado
+    while True: 
+        area_deseado = area_captada * descarte_mm_valor # m3 calculo modificado para el primer descarte de lluvia
+        descarte_lluvia = volumen_piloto - area_deseado # m3 volumen utilizable con descarte de lluvia
+         # Calculo del porcentaje de capacidad del sistema construido con respecto al volumen utilizable con descarte
         tienes_pocentaje = capacidad_m3 / descarte_lluvia * 100
         descarte_respuesta = input(f"¿Desea considerar el primer descarte de lluvia de 5 mm para limpieza del techo? (Si/No)\n")
         if descarte_respuesta == 'si' or descarte_respuesta == 'si':
@@ -148,9 +149,9 @@ def verificar_descarte(volumen_piloto, area_captada, capacidad_m3):
         verificar_lluvia() # Función activada e inicio de esta
         break #Termina el bucle actual
 
-# Funcion para verificar si llueve y el sistema de captación pluvial funciona
+# Funcion para verificar si llueve y el sistema de captación pluvial funciona para monitorear
 def verificar_lluvia():
-    while True:
+    while True: 
         print("Finalmente para que funcione el sistema de captacion pluvial y empezar a monitorear confirmar si llueve.")
         lluvia = input(f"¿Esta lloviendo en la UNRC? (Si/No)\n")
         if lluvia == 'si' or lluvia == 'si':
