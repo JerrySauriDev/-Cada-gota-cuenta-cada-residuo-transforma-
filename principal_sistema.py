@@ -1,14 +1,14 @@
 #Inicio
-# Bienvenida al programa
+# Bienvenida al programa e inicio de simulacion para un sistema de captación pluvial
 print(f"\nBienvenid@, nuestro sistema busca transformar el reciclaje de PET y HDPE como una propuesta sustentable y\n"
     f"sostenible para captar y reutilizar el agua de la lluvia dentro de la Universidad Nacional Rosario Castellanos.\n")
 print(f"Pasos para la captación de agua pluvial.")
-print(f"Requerimos recoleccion de plasticos que seran reutilizados para armados de modulos de almacenamiento"
+print(f"Requerimos recoleccion de plasticos que seran reutilizados para armados de modulos de almacenamiento\n"
     f"y contruir el sistema de captación con demas materiales necesarios.\n")
 
 # Declaracion de variables y funciones
 print("Materiales requeridos\n")
-material =(f"1.-PET suficiente\n"
+material =(f"1.-PET suficiente\n"   #Lista de materiales que se requieren guardado en una variable
     f"2.-Canaletas\n"
     f"3.-Filtro primario (malla o tela)\n"
     f"4.-Tubo de bajada\n"
@@ -19,14 +19,14 @@ material =(f"1.-PET suficiente\n"
     f"9.-Manguera\n")
 print(material) # Se llama la variable material con uso de print
 
-creacion =(f"1.-Colocar una canaleta en el borde del techo para recolectar el agua de la lluvia\n"
+creacion =(f"1.-Colocar una canaleta en el borde del techo para recolectar el agua de la lluvia\n"  # Serie de pasos a seguir guardado en una variable
     f"2.-Conectar la canaleta a un tubo o embudo inicial que dirija el agua hacia la pared\n"
     f"3.-Fijar botellas PET cortadas (en forma de canal o media caña) a lo largo de la pared, formando una bajada continua\n"
     f"4.-Unir las botellas con cinta resistente, tornillos o alambre, sobre una estructura de soporte (rejilla, madera reciclada\n"
     f"5.-Al final del canal, instalar un filtro casero con capas de grava, arena y carbón activado dentro de una botella cortada\n"
     f"6.-El agua filtrada cae directamente en un tinaco o depósito reciclado con tapa y válvula de salida.\n")
 
-# Datos obtenidos para calcular el area, volumen en en la UNRC Chalco
+# Datos obtenidos para calcular el area, volumen en en la UNRC Chalco para una simulación mas especifica
 medida_enfrente = 44.33 # m
 medida_atras = 46.7 # m
 medida_lado_izquierdo = 94.37 # m
@@ -85,9 +85,10 @@ def calcular_volumen_area():
         # Operacion de calculo de area y volumen con el porcentaje ingresado
         if 0 < area_seleccionado <= 100:
             area_captada = area * (area_seleccionado / 100) # m2
-            volumen_modificado = area_captada * lluvia_anual * coeficiente
+            volumen_modificado = area_captada * lluvia_anual * coeficiente # v =a*p*ks
             print(f"\nUtilizando un {area_seleccionado}% del area de la UNRC obtendriamos: {area_captada:.2f} m² = {volumen_modificado:.2f} m³ de agua captada\n")
-            calcular_capacidad_pet(area_captada=area_captada, volumen_piloto=volumen_modificado, porcentaje_piloto=area_seleccionado) # Función activada e inicio de esta ademas de llamar variables
+            # Función activada e inicio de esta ademas de llamar variables
+            calcular_capacidad_pet(area_captada=area_captada, volumen_piloto=volumen_modificado, porcentaje_piloto=area_seleccionado)
             break
         else:
             print("Porcentaje debe estar entre 0 y 100.")
