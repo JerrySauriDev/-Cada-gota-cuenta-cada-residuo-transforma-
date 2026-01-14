@@ -64,3 +64,5 @@ with open('Reporte_Medidas.txt', 'w') as f: # Abrir archivo para escribir
     f.write(f"Resultados de investigación:\n") # Encabezado
     f.write(f"Área Total: {area:.2f} m2\n") # Escribir resultado área
     f.write(f"Perímetro: {perimetro:.2f} m\n") # Escribir resultado perímetro
+
+print("\nGráfica generada y reporte guardado exitosamente.") # Confirmación de éxito
