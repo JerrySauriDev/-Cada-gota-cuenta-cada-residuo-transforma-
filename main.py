@@ -2,11 +2,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-from Grafica_mm_anual_historica import Datos_Mensuales
-
-carpeta_destino = 'Graficas_Datos_Generales'
-# Crear carpeta si no existe
-if not os.path.exists(carpeta_destino):
-    os.makedirs(carpeta_destino)
+from Procesos_Generales.Grafica_mm_anual_historica import Datos_Mensuales
+from Procesos_Generales.Grafica_Medidas_unidad_academica import Grafica_Medidas
+from Procesos_Generales.Grafica_min_max_media_24h import Grafica_24h
+from Procesos_Generales.Grafica_min_max_media_mensual import Grafica_Mensual
+from Procesos_Generales.Grrafica_puntos_PET import Grafica_puntos_pet
     
-print("Completado {Datos_Mensuales}")
+print(f"Completado {Datos_Mensuales, Grafica_Medidas}, {Grafica_24h}, {Grafica_Mensual}, {Grafica_puntos_pet}")
