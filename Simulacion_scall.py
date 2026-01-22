@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from Calculo_area_perimetro import area, perimetro, texto_materiales, texto_pasos, activado, mm_maxima, volumen_captable, volumen_neto, volumen_descarte, calcular_volumen_captable
+from Calculo_area_perimetro import area, perimetro, texto_materiales, texto_pasos, activado, mm_maxima, volumen_captable, volumen_neto, volumen_descarte, calcular_volumen_captable, calcular_descarte
 
 #Presentacion del sistema
 print("\nBienvenid@, nuestro sistema busca transformar el reciclaje de PET y HDPE como una propuesta sustentable y\n"
@@ -63,7 +63,7 @@ def calcular_capacidad_pet(area_captada, volumen_piloto, porcentaje_piloto):
     print("Ahora veremos cuantos litros de capacidad obtendremos de acuerdo al tamaño de botella utilizado y parte del area de la UNRC Chalco, ingrese los datos.")   
     print("\nOpciones de módulos para almacenamiento con PET:\n")
     print("1. Botellas 2.5L | 2. Botellas 3L")
-    while True:       # Bucle para seleccionar tamaño de botella y numero de modulos
+    while True:  # Bucle para seleccionar tamaño de botella y numero de modulos
         tamaño_botella = input("Seleccione el tipo de botella usado (1 o 2): ")
         num_modulos = int(input("Ingrese el número total de botellas interconectados: "))
         if tamaño_botella == '1' or tamaño_botella =='1':  # Botellas de 2.75 litros por botella PET
@@ -84,28 +84,25 @@ def calcular_capacidad_pet(area_captada, volumen_piloto, porcentaje_piloto):
         print(f"\n¡Genial! ¡Tienes un sistema con una capacidad de {capacidad_final} litros ({capacidad_m3} m³) para almacenamiento de agua pluvial!\n")
         print(f'**Como recomendación del sistema de captación construido y el porcentaje de area seleccionado y aprovechar los {volumen_piloto:.2f}m³ que se puede captar se necesitan aproximadamente de {volumen_estimado: .0f} modulos para ese {porcentaje_piloto: .0f}% de superficie disponible.**\n')
         
-        verificar_descarte(volumen_piloto=volumen_piloto, area_captada=area_captada, capacidad_m3=capacidad_m3)  # Función activada e inicio de esta
+        verificar_descarte(vol_c=volumen_piloto, area_c=area_captada, capacidad_m3=capacidad_m3)  # Función activada e inicio de esta
         break
 
 #Funcion para verificar primer descarte de lluvia para limpieza del techo
-def verificar_descarte(volumen_piloto, area_captada, capacidad_m3):
+def verificar_descarte(vol_c, area_c, capacidad_m3):
     while True: 
-        area_deseado = area_captada * mm_maxima # m3 calculo modificado para el primer descarte de lluvia
-        descarte_lluvia = volumen_piloto - area_deseado # m3 volumen utilizable con descarte de lluvia
-         # Calculo del porcentaje de capacidad del sistema construido con respecto al volumen utilizable con descarte
-        tienes_pocentaje = capacidad_m3 / descarte_lluvia * 100
-        descarte_respuesta = input(f"¿Desea considerar el primer descarte de lluvia de 5 mm para limpieza del techo? (Si/No)\n")
+        descarte_respuesta = input(f"¿Desea considerar el primer descarte de lluvia de 5 mm para limpieza del techo? (Si/No)\n").lower()
         if descarte_respuesta == 'si' or descarte_respuesta == 'si':
-            print(f"\nConsiderando un primer lavado del techo con 5 mm de lluvia, el volumen útil de captación pluvial es de {descarte_lluvia:.2f} m³.")
-            print(f"Actualmente, el sistema de almacenamiento construido tiene una capacidad de {capacidad_m3:.2f} m³ para una superficie de {area_captada:.2f}m².\n")
+            util = calcular_descarte(area_c, vol_c)
+            print(f"\nConsiderando un primer lavado del techo con 5 mm de lluvia, el volumen útil de captación pluvial es de {util:.2f} m³.")
+            print(f"Actualmente, el sistema de almacenamiento construido tiene una capacidad de {capacidad_m3:.2f} m³ para una superficie de {area_c:.2f}m².\n")
             print(f'"El primer descarte de lluvia ayuda a mantener el sistema limpio y eficiente cada vez que llueve"')
-            print(f"      ¡Tienes aproximadamente {tienes_pocentaje:.2f}% del volumen captable.!\n")
+            print(f"      ¡Tienes aproximadamente {area_c:.2f}% del volumen captable.!\n")
 
         elif descarte_respuesta == 'no':
-            print(f"\nNo se considerando un primer lavado del techo con 5 mm de lluvia, el volumen útil de captación pluvial es de {volumen_piloto:.2f} m³\n")
-            print(f"Actualmente, el sistema de almacenamiento construido tiene una capacidad de {capacidad_m3:.2f} m³ para una superficie de {area_captada:.2f}m².\n")
+            print(f"\nNo se considerando un primer lavado del techo con 5 mm de lluvia, el volumen útil de captación pluvial es de {vol_c:.2f} m³\n")
+            print(f"Actualmente, el sistema de almacenamiento construido tiene una capacidad de {capacidad_m3:.2f} m³ para una superficie de {area_c:.2f}m².\n")
             print(f'"El primer descarte de lluvia ayuda a mantener el sistema limpio y eficiente cada vez que llueve"')
-            print(f"     ¡Tienes aproximadamente {tienes_pocentaje:.2f}% del volumen captable.!\n")      
+            print(f"     ¡Tienes aproximadamente {area_c:.2f}% del volumen captable.!\n")      
             
         else:
             print("\n\n¡Respuesta invalida!\n Solo 'si' o 'no'.")

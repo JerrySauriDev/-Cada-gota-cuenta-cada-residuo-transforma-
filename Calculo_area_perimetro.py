@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-# Carga de datos
+# Carga de datos de archivos excel
 df_mm_anual =pd.read_csv('Datos_Dia_mm_validados.csv') # Lluvia maxima 
 df_Co = pd.read_csv('Coeficiente.csv') # Coeficiente de escorrentia de acuerdo al material del techo
 df_medidas = pd.read_csv('Medidas_unidad_academica.csv') # Medidas de la unidad academica
@@ -20,7 +20,8 @@ activado = ("El agua de lluvia es dirigida desde el techo a través de las canal
             "Riego de plantas, Limpeza de salones y patio, Uso sanitario\n\n"
             "Se debe dar mantenimiento al sistema; monitorearlo, limpiarlo, cambiar filtros, etc\n"
             '"Condicion sana, buena eficiencia"')
-# Procedimiento para el calculo de area y perimetro
+
+# Procedimiento para el calculo de area y perimetro con el archivo Medidas_unidad_academica.csv
 medidas = dict(zip(df_medidas['Medidas'], df_medidas['Metros'])) # Convertimos a diccionario para fácil acceso
 enfrente, atras = medidas['Enfrente'], medidas['Atras'] # Se definen coordenadas basadas en las medidas
 lat_der, lat_izq = medidas['Lateral derecho'], medidas['Lateral izquierda'] # Se definen coordenadas basadas en las medidas
@@ -32,12 +33,12 @@ y = [v[1] for v in vertices]
 area = 0.5 * np.abs(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1))) # Fórmula del área del polígono
 perimetro = enfrente + lat_der + atras + lat_izq # Cálculo del perímetro
 
-# Extracción del coeficiente de escorrentia
-material_interes = "Techos impermeabilizados o cubiertos con materiales duros (p. ej. Tejas)"
-Co = df_Co.loc[df_Co['Material o tipo de construcción'] == material_interes, 'Kc'].item()
+# Extracción del coeficiente de escorrentia del archivo Coeficiente.csv
+material_interes = "Techos impermeabilizados o cubiertos con materiales duros (p. ej. Tejas)" # Se difine el tipo de material
+Co = df_Co.loc[df_Co['Material o tipo de construcción'] == material_interes, 'Kc'].item() # Se busca el valor de acuerdo a tipo de material
 
-# Extracción de mm máxima
-columna_a_extraer = 'PROMEDIO'
+# Extracción de mm máxima con el archivo Datos_Dia_mm_validados.csv
+columna_a_extraer = 'PROMEDIO' # Se define que valor a usar ya sea un MES, ACUMULACION (mm) o PROMEDIO
 try:
     mm_maxima_seleccionado = df_mm_anual.loc[df_mm_anual['AÑO'] == 'MÁXIMA', columna_a_extraer].item()
 except KeyError:
@@ -54,7 +55,7 @@ mm_maxima = mm_maxima_seleccionado / 1000 # Convertir mm a m3
 volumen_captable = area * mm_maxima * Co # m3 volumen utilizable de agua pluvial sin descarte
 
 # Descarte de seguridad (5mm)
-volumen_descarte = (5 / 1000) * area * Co
+volumen_descarte = (5 / 1000) * area
 volumen_neto = max(0, volumen_captable - volumen_descarte)
 
 def calcular_volumen_captable(porcentaje_area):
@@ -65,10 +66,16 @@ def calcular_volumen_captable(porcentaje_area):
 
 def calcular_capacidad_almacenamiento(tipo_botella, cantidad):
     """Determina la capacidad en litros y m3 según el PET recolectado."""
-    capacidad_unitaria = 2.75 if tipo_botella == "1" else 3.0
+    capacidad_unitaria = 2.5 if tipo_botella == "1" else 3.0
     total_litros = cantidad * capacidad_unitaria
     return total_litros, total_litros / 1000
-        
+
+def calcular_descarte(area_captada, volumen_sin_descarte):
+    """Calcula el impacto del primer descarte de 5mm."""
+    volumen_descarte = area_captada * (5/1000)
+    utilizable = volumen_sin_descarte - volumen_descarte
+    return utilizable
+
 # Generador de listas formateadas
 def generar_lista(titulo, lista):
     salida = []
