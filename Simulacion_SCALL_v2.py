@@ -1,115 +1,165 @@
-import Motor_SCALL_v1
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER
+import Motor_SCALL_v1 as MtSll
+import os
 
-def bienvenida(): #Presentacion del sistema
-    print(f"\n{'='*100}")
-    print("\nBienvenid@, nuestro sistema busca transformar el reciclaje de PET y HDPE como una propuesta sustentable y\n"
-          "sostenible para captar y reutilizar el agua de la lluvia dentro de la Universidad Nacional Rosario Castellanos.\n")
-    print(f"{'='*100}\n")
-    print(f"Requerimos recoleccion de plasticos que seran reutilizados para armados de modulos de \nalmacenamiento y contruir el sistema de captación con demas materiales necesarios.\n {Motor_SCALL_v1.texto_materiales}")
-    print("Verificar si contamos con los materiales para captación de agua pluvial...")
+CARPETA_RESULTADOS = "SCALL_Resultados"
 
-def verificacion(): 
-    while True: # Función para la verificación de material reunido para contruir el sistema de captación
-        resp_material = input("¿Tienes todos los materiales? (Si/No): ").lower()
-        if resp_material == 'si' or resp_material == 'si':
-            print("\n¡Genial! ¡Tienes todos los materiales necesarios!\n")
-            print(f"Como siguiente paso es crear el sistema de captación de agua pluvial con los materiales reunidos.\n{Motor_SCALL_v1.texto_pasos}") # Se llama la variable creacion con uso de print
-            break #Termina el bucle actual
-        elif resp_material == 'no':
-            print("\n¡Revisa que materiales requeridos te hacen falta para crear el sistema!\n", "Sin materiales no hay sistema de captacion pluvial")          
-        else:
-            print("\n\n¡Respuesta invalida!\n Solo 'si' o 'no'.")
+if not os.path.exists(CARPETA_RESULTADOS):
+    os.makedirs(CARPETA_RESULTADOS)
 
+CONFIG_UI = {
+    "nombre_proyecto": 'Captación de agua pluvial y gestión de residuos.\n"Cada gota cuenta cada residuo transforma"',
+    "institucion": "Universidad Nacional Rosario Castellanos",
+    "autor": 'Equipo 3',
+}
 
-    while True: # Función para la verificacion de contrucción del sistema de captación de agua conforme a los pasos dados
-        exito_pasos = input("\n¿Se completo con exito la construcción del scall? (Si/No): ").lower()
-        if exito_pasos == 'si' or exito_pasos == 'si':
-            print("\n¡Genial! ¡Tienes un sistema de captación de agua pluvial listo para funcionar!\n")
-            return True
-        elif exito_pasos == 'no':
-            print("\nSistema de captación de agua pluvial no contruido.", "Sin infraestructura no hay sistema de captacion pluvial")
-            return False        
+def bienvenida():
+    print("\n" + "="*60)
+    print("Bienvenid@ al sistema SCALL — Captación de Agua Pluvial UNRC")
+    print("Este sistema transforma reciclaje PET en solución sustentable.")
+    print("="*60)
+    print(MtSll.texto_materiales)
+    print("\nVerificando materiales disponibles...\n")
 
-def ejecutar_simulacion():
+def preguntar_si_no(mensaje):
+    while True:
+        resp = input(mensaje).strip().lower()
+        if resp in ("si", "no"):
+            return resp
+        print("Respuesta inválida. Solo 'si' o 'no'.")
+
+def verificacion():
+    if preguntar_si_no("¿Cuentas con todos los materiales? (Si/No): ") == "no":
+        print("Sin materiales no hay sistema SCALL.")
+        return False
+
+    print("\n¡Genial! ¡Tienes todos los materiales necesarios!\n")
+    print(MtSll.texto_pasos)
+
+    if preguntar_si_no("\n¿Sistema SCALL construido exitosamente? (Si/No): ") == "no":
+        print("Sistema no construido. Sin infraestructura no hay sistema de captacion pluvial.\nProceso finalizado.")
+        return False
+
+    print("\n¡Genial! ¡Tienes un sistema de captación de agua pluvial listo para operar!")
+    return True
+
+def seleccionar_porcentaje():
+    while True:
+        try:
+            porcentaje = float(input("Ingrese porcentaje de área a captar (0-100): "))
+            if 0 < porcentaje <= 100:
+                return porcentaje
+        except:
+            pass
+        print("Valor inválido. Intente nuevamente.")
+
+def seleccionar_botellas():
+    while True:
+        tipo = input("Seleccione tipo de botella (1 = 2.5L | 2 = 3L): ")
+        if tipo in ("1", "2"):
+            try:
+                cantidad = int(input("Cantidad de botellas interconectadas: "))
+                if cantidad > 0:
+                    return tipo, cantidad
+            except:
+                pass
+        print("Datos inválidos. Intente nuevamente.")
+
+def generar_reporte(datos):
+    nombre_archivo = os.path.join(CARPETA_RESULTADOS, "Reporte_SCALL.txt")
+    with open(nombre_archivo, "w", encoding="utf-8") as f:
+        f.write(f"{CONFIG_UI['nombre_proyecto']}\n")
+        f.write(f"{CONFIG_UI['institucion']}\n")
+        f.write("="*60 + "\n\n")
+
+        for clave, valor in datos.items():
+            f.write(f"{clave}: {valor}\n")
+    print(f"\nReporte generado: {nombre_archivo}")
+
+def generar_pdf(datos):
+    nombre_pdf = os.path.join(CARPETA_RESULTADOS, "Reporte_SCALL.pdf")
+    doc = SimpleDocTemplate(nombre_pdf, pagesize=letter)
+    styles = getSampleStyleSheet()
+    
+    estilo_titulo = ParagraphStyle(
+        name="Titulo",
+        parent=styles["Title"],
+        alignment=TA_CENTER
+    )
+
+    elementos = []
+
+    elementos.append(Paragraph(CONFIG_UI["nombre_proyecto"], estilo_titulo))
+    elementos.append(Paragraph(CONFIG_UI["institucion"], styles["Heading2"]))
+    elementos.append(Spacer(1, 20))
+
+    elementos.append(Paragraph("Resumen del Sistema de Captación de Agua Pluvial", styles["Heading2"]))
+    elementos.append(Spacer(1, 12))
+
+    for clave, valor in datos.items():
+        texto = f"<b>{clave}:</b> {valor}"
+        elementos.append(Paragraph(texto, styles["Normal"]))
+        elementos.append(Spacer(1, 8))
+
+    elementos.append(Spacer(1, 20))
+    elementos.append(Paragraph(
+        "Conclusión: El sistema SCALL permite aprovechar agua de lluvia mediante reciclaje PET, "
+        "generando una solución sustentable y viable para la unidad académica.",
+        styles["Italic"]
+    ))
+
+    doc.build(elementos)
+
+    print(f"Reporte PDF generado: {nombre_pdf}")
+
+def main():
     bienvenida()
 
     if not verificacion():
-        return # Detiene el programa si no hay sistema
+        return
+
+    print("Ahora veremos el area y volumen de agua pluvial que se puede captar en la UNRC.")
+    print(f"\nÁrea total UNRC: {MtSll.area:.2f} m²")
+    print(f"Volumen máximo captable: {MtSll.volumen_captable:.2f} m³\n")
+
+    porcentaje = seleccionar_porcentaje()
+    area_c, vol_c = MtSll.calcular_volumen_captable(porcentaje)
+
+    print(f"\nÁrea seleccionada: {area_c:.2f} m²")
+    print(f"Volumen captable: {vol_c:.2f} m³\n")
+
+    tipo, cant = seleccionar_botellas()
+    litros, m3_almacen = MtSll.calcular_capacidad_almacenamiento(tipo, cant)
+
+    print(f"\nCapacidad de almacenamiento: {litros:.0f} litros ({m3_almacen:.2f} m³)")
+
+    util = vol_c
+    if preguntar_si_no("¿Aplicar descarte inicial de 5 mm para limpieza? (Si/No): ") == "si":
+        util = MtSll.calcular_descarte(area_c, vol_c)
+        print(f"Volumen útil post-descarte: {util:.2f} m³")
+
+    porcentaje_sistema = (m3_almacen / util * 100) if util > 0 else 0
+    print(f"Capacidad del sistema respecto al volumen captable: {porcentaje_sistema:.2f}%\n")
+
+    if preguntar_si_no("¿Está lloviendo en la UNRC? (Si/No): ") == "si":
+        print("\nSistema activado:\n")
+        print(MtSll.activado)
+    else:
+        print("\nEsperando lluvia para iniciar monitoreo...")
     
-    print("\nAhora veremos el area y volumen de agua pluvial que se puede captar en la UNRC Chalco.")
-    print(f"   Area total de superficie de la UNRC Chalco es de: {Motor_SCALL_v1.area:.2f} m²") # se llama la variable de area m2 de la unidad UNRC
-    print(f"   Volumen total que se puede captar es de: {Motor_SCALL_v1.volumen_captable:.2f} M³\n") # se llama la variable del volumen calculado 
-    
-    while True: # Selección de superficie
-        print("Ahora ingrese el porcentaje de area de superficie a captar.") 
-        porcentaje = float(input("Ingrese % de área a captar (0-100): "))
-        # Operacion de calculo de area y volumen con el porcentaje ingresado
-        if 0 < porcentaje <= 100:
-            area_c, vol_c = Motor_SCALL_v1.calcular_volumen_captable(porcentaje) # v =a*p*ks
-            print(f"\nUtilizando un {porcentaje}% del area de la UNRC obtendriamos: {area_c:.2f} m² = {vol_c:.2f} m³ de agua captada\n")
-            break
-        else:
-            print("Porcentaje debe estar entre 0 y 100.")
-            continue # Vuelve a iniciar el ciclo actual
+    datos_reporte = {
+    "Área total UNRC (m²)": f"{MtSll.area:.2f}",
+    "Área seleccionada (m²)": f"{area_c:.2f}",
+    "Volumen captable (m³)": f"{vol_c:.2f}",
+    "Capacidad de almacenamiento (m³)": f"{m3_almacen:.2f}",
+    "Volumen útil final (m³)": f"{util:.2f}",
+    "Porcentaje de aprovechamiento (%)": f"{porcentaje_sistema:.2f}"
+    }
+    generar_reporte(datos_reporte)
+    generar_pdf(datos_reporte)
 
-    print("Ahora veremos cuantos litros de capacidad obtendremos de acuerdo al tamaño de botella utilizado y parte del area de la UNRC Chalco, ingrese los datos.")   
-    print("\nOpciones de módulos para almacenamiento con PET:\n")
-    print("1. Botellas 2.5L | 2. Botellas 3L")
-    while True: # Almacenamiento PET
-        tipo = input("Seleccione (1/2): ")
-        cant = int(input("Cantidad de botellas interconectadas: "))
-        if tipo == '1' or tipo =='1':  # Botellas de 2.75 litros por botella PET
-            capacidad_litros = 0.0
-            capacidad_litros = cant * 2.5
-        elif tipo == '2':  # Botellas de 3 litros por botella PET
-            capacidad_litros = 0.0
-            capacidad_litros = cant * 3
-        else:
-            print("\nOpción inválida.\nSolo ingresa 1 o 2.")
-            continue # Vuelve a iniciar el ciclo actual  
-        capacidad_final = capacidad_litros
-        litros, m3_almacen = Motor_SCALL_v1.calcular_capacidad_almacenamiento(tipo, cant)
-        num_modulos = vol_c /( capacidad_final/100) # Aproximación de modulos necesarios para scall de acuerdo al area     
-        print(f"\nDatos de Capacidad del Sistema de captación de agua pluvial:")
-        print(f"   Botellas utilizados: {cant}")
-        print(f"   Capacidad total estimado: {litros} litros.")
-        print(f"\n¡Genial! ¡Tienes un sistema con una capacidad de {litros:.0f} litros ({m3_almacen} m³) para almacenamiento de agua pluvial!\n")
-        print(f'**Como recomendación del sistema de captación construido y el porcentaje de area seleccionado y aprovechar los {vol_c:.2f}m³ que se puede captar se necesitan aproximadamente de {num_modulos: .0f} modulos para ese {porcentaje: .0f}% de superficie disponible.**\n')
-        break
-
-    while True: # Descarte de lluvia para limpieza del techo
-        descarte_sn = input("\n¿Considerar descarte de 5mm para limpieza? (Si/No): ").lower()
-        util = Motor_SCALL_v1.calcular_descarte(area_c, vol_c)
-        tienes_porcentaje = m3_almacen / util * 100 # Calculo del porcentaje de capacidad del sistema construido con respecto al volumen utilizable con descarte
-        if descarte_sn == 'si' or descarte_sn == 'si':
-            print(f"\nConsiderando un primer lavado del techo con 5 mm de lluvia, el volumen útil de captación pluvial es de {util:.2f} m³.")
-            print(f"Actualmente, el sistema de almacenamiento construido tiene una capacidad de {m3_almacen:.2f} m³ para una superficie de {area_c:.2f}m².\n")
-            print(f'"El primer descarte de lluvia ayuda a mantener el sistema limpio y eficiente cada vez que llueve"')
-            print(f"      ¡Tienes aproximadamente {tienes_porcentaje:.0f} % del volumen captable.!\n")
-            print(f"Volumen útil post-limpieza: {util:.2f} m³")
-        elif descarte_sn == 'no':
-            print(f"\nNo se considerando un primer lavado del techo con 5 mm de lluvia, el volumen útil de captación pluvial es de {vol_c:.2f} m³\n")
-            print(f"Actualmente, el sistema de almacenamiento construido tiene una capacidad de {m3_almacen:.2f} m³ para una superficie de {area_c:.2f}m².\n")
-            print(f'"El primer descarte de lluvia ayuda a mantener el sistema limpio y eficiente cada vez que llueve"')
-            print(f"     ¡Tienes aproximadamente {tienes_porcentaje:.2f}% del volumen captable.!\n")      
-            
-        else:
-            print("\n\n¡Respuesta invalida!\n Solo 'si' o 'no'.")
-            continue # Vuelve a iniciar el ciclo actual
-        break #Termina el bucle actual
-
-    while True: # Simulación Final
-        print("Finalmente para que funcione el sistema de captacion pluvial y empezar a monitorear confirmar si llueve.")
-        lluvia = input(f"¿Esta lloviendo en la UNRC? (Si/No): ").lower()
-        if lluvia == 'si' or lluvia == 'si':
-            print(f"\nEl sistema se activa...\n\n{Motor_SCALL_v1.activado}")        
-            break #Termina el bucle actual
-        elif lluvia == 'no':
-            print(f"\nEsperar a que llueva y poder monitorear.\n")
-            print(f'"Sin lluvia no hay recolección y monitoreo"')
-            break #Termina el bucle actual          
-        else:
-            print("\n¡Respuesta invalida!\n Solo 'si' o 'no'.")
-            continue # Vuelve a iniciar el ciclo actual
 if __name__ == "__main__":
-    ejecutar_simulacion()
+    main()

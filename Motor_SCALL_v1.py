@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import sys
-
+import os
 # Carga segura de archivos
 def cargar_csv(nombre):
     try:
@@ -10,9 +10,11 @@ def cargar_csv(nombre):
         print(f"ERROR: No se encontró el archivo {nombre}")
         sys.exit()
 
-df_mm_anual = pd.read_csv('Datos_Dia_mm_validados.csv') # Precipitación historica de la zona chalco
-df_Co = pd.read_csv('Coeficiente.csv') # Coeficiente de escorrentia de acuerdo al material del techo
-df_medidas = pd.read_csv('Medidas_unidad_academica.csv') # Medidas de la unidad academica
+RUTA_DATOS = os.path.join(os.path.dirname(__file__), "Datos_recopilados")
+
+df_mm_anual = cargar_csv(os.path.join(RUTA_DATOS, "Datos_Dia_mm_validados.csv"))
+df_Co = cargar_csv(os.path.join(RUTA_DATOS, "Coeficiente.csv"))
+df_medidas = cargar_csv(os.path.join(RUTA_DATOS, "Medidas_unidad_academica.csv"))
 
 CONFIG = { 
     "material_techo": "Techos impermeabilizados o cubiertos con materiales duros (p. ej. Tejas)",

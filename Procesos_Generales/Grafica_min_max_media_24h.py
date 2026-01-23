@@ -1,14 +1,25 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+import sys
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # Carpeta raíz del proyecto (una arriba de Procesos_Generales)
+CARPETA_DATOS = os.path.join(BASE_DIR, "Datos_recopilados") # Carpeta donde estan los archivo CSV
+CARPETA_GRAFICAS = os.path.join(BASE_DIR, "Graficas_Datos_Generales") # Carpeta donde se guardan resultados
+os.makedirs(CARPETA_GRAFICAS, exist_ok=True) # Crear carpetas si no existen
+
+# FUNCIÓN CARGA SEGURA CSV
+def cargar_csv(nombre_archivo):
+    ruta = os.path.join(CARPETA_DATOS, nombre_archivo)
+    try:
+        return pd.read_csv(ruta)
+    except FileNotFoundError:
+        print(f"\nERROR: No se encontró el archivo:\n{ruta}")
+        print("Verifica que la carpeta 'Datos_recopilados' exista y contenga el CSV.")
+        sys.exit()
 
 def Grafica_24h():
-    carpeta_destino = 'Graficas_Datos_Generales'
-    # Crear carpeta si no existe
-    if not os.path.exists(carpeta_destino):
-        os.makedirs(carpeta_destino)
-
-    df = pd.read_csv('Datos_Dia_mm_validados.csv') # Cargar los datos limpios y verificados desde el archivo
+    df = cargar_csv('Datos_Dia_mm_validados.csv') # Cargar los datos limpios y verificados desde el archivo
 
     # Preparar los datos para la gráfica de máximas, medias y mínimas mensuales
     meses = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
@@ -64,9 +75,13 @@ def Grafica_24h():
     # Ajustar el límite de Y para que los textos no se corten
     plt.ylim(Minima.min() - 5, Maxima.max() + (Maxima.max()*0.15)) # Margen superior e inferior
     plt.tight_layout()
+
     # Guardar la gráfica
-    nombre_img = "Grafica_estadisticas_lluvia_24h.png" # Nombre del archivo de la imagen
-    plt.savefig(os.path.join(carpeta_destino, nombre_img), dpi=400, bbox_inches='tight') # Guardar la imagen
-   
+    nombre_img = os.path.join(CARPETA_GRAFICAS, "Grafica_estadisticas_lluvia_24h.png") # Nombre del archivo de la imagen
+    plt.savefig(nombre_img, dpi=400, bbox_inches='tight') # Guardar la imagen
     plt.show()
-Grafica_24h()
+    
+    print("\nGráfica generada correctamente.")
+
+if __name__ == "__main__":
+    Grafica_24h()

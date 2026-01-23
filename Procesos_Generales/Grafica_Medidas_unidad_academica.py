@@ -4,22 +4,46 @@ import matplotlib.patches as patches
 import pandas as pd
 import numpy as np
 import os
+import sys
+
+CONFIG_UI = {
+    "nombre_proyecto": 'Captación de agua pluvial y gestión de residuos.\n"Cada gota cuenta cada residuo transforma"',
+    "institucion": "Universidad Nacional Rosario Castellanos",
+    "autor": 'Equipo 3',
+}
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # Carpeta raíz del proyecto (una arriba de Procesos_Generales)
+CARPETA_DATOS = os.path.join(BASE_DIR, "Datos_recopilados") # Carpeta donde estan los archivo CSV
+CARPETA_RESULTADOS = os.path.join(BASE_DIR, "SCALL_Resultados") # Carpeta donde se guardan resultados
+CARPETA_GRAFICAS = os.path.join(BASE_DIR, "Graficas_Datos_Generales") # Carpeta donde se guardan resultados
+os.makedirs(CARPETA_RESULTADOS, exist_ok=True) # Crear carpeta si no existen
+os.makedirs(CARPETA_GRAFICAS, exist_ok=True) # Crear carpeta si no existen
+
+# FUNCIÓN CARGA SEGURA CSV
+def cargar_csv(nombre_archivo):
+    ruta = os.path.join(CARPETA_DATOS, nombre_archivo)
+    try:
+        return pd.read_csv(ruta)
+    except FileNotFoundError:
+        print(f"\nERROR: No se encontró el archivo:\n{ruta}")
+        print("Verifica que la carpeta 'Datos_recopilados' exista y contenga el CSV.")
+        sys.exit()
 
 def Grafica_Medidas():
-    carpeta_destino = 'Graficas_Datos_Generales'
-    # Crear carpeta si no existe
-    if not os.path.exists(carpeta_destino):
-        os.makedirs(carpeta_destino)
-
-    df = pd.read_csv('Medidas_unidad_academica.csv') # Cargar datos de medidas
+    
+    df = cargar_csv("Medidas_unidad_academica.csv") # Cargar archivo CSV de medidas
     # Convertimos a diccionario para fácil acceso
     medidas = dict(zip(df['Medidas'], df['Metros'])) # Llave: Nombre de la medida, Valor: Metros
 
     # Se definen coordenadas basadas en las medidas
-    enfrente = medidas['Enfrente'] # Medida frontal
-    atras = medidas['Atras'] # Medida trasera
-    lat_der = medidas['Lateral derecho'] # Medida lateral derecha
-    lat_izq = medidas['Lateral izquierda'] # Medida lateral izquierda
+    try:
+        enfrente = medidas['Enfrente'] # Medida frontal
+        atras = medidas['Atras'] # Medida trasera
+        lat_der = medidas['Lateral derecho'] # Medida lateral derecha
+        lat_izq = medidas['Lateral izquierda'] # Medida lateral izquierda
+    except KeyError:
+        print("\nERROR: Nombres de columnas incorrectos en Medidas_unidad_academica.csv")
+        sys.exit()
 
     # Proyectamos los puntos (aproximación de trapezoide)
     vertices = [
@@ -57,22 +81,31 @@ def Grafica_Medidas():
     ax.set_ylim(-10, max(lat_der, lat_izq) + 15) # Límites del eje Y
     ax.set_aspect('equal') # Proporción igual
     plt.title(f"Dimensiones de la unidad académica", pad=20, fontsize=14, fontweight='bold') # Título
-    plt.grid(True, linestyle=':', alpha=0.6) # Cuadrícula
     plt.xlabel('Metros (X)') # Etiqueta eje X
     plt.ylabel('Metros (Y)') # Etiqueta eje Y
+    plt.grid(True, linestyle=':', alpha=0.6) # Cuadrícula
 
     plt.tight_layout() # Ajustar el diseño para evitar recortes
+
     # Guardar la gráfica
-    nombre_img = "Grafica_Perimetro_area.png" # Nombre del archivo de la imagen
-    plt.savefig(os.path.join(carpeta_destino, nombre_img), dpi=400, bbox_inches='tight') # Guardar la imagen
+    nombre_img = os.path.join(CARPETA_GRAFICAS, "Grafica_Perimetro_Area.png") # Nombre del archivo de la imagen
+    plt.savefig(nombre_img, dpi=400, bbox_inches='tight') # Guardar la imagen
     plt.show() # Mostrar la gráfica
 
     # Por ultimo guardar los resultados en un archivo de texto
-    with open('Reporte_Medidas.txt', 'w') as f: # Abrir archivo para escribir
-        f.write(f"Proyecto: Cada Gota Cuenta Cada Residuo Transforma\n") # Título del proyecto
-        f.write(f"Resultados de investigación:\n") # Encabezado
-        f.write(f"Área Total: {area:.2f} m2\n") # Escribir resultado área
-        f.write(f"Perímetro: {perimetro:.2f} m\n") # Escribir resultado perímetro
-    
-    print("\nGráfica generada y reporte guardado exitosamente.") # Confirmación de éxito
-Grafica_Medidas()
+    nombre_reporte = os.path.join(CARPETA_RESULTADOS, "Reporte_Medidas.txt")
+
+    with open(nombre_reporte, "w", encoding="utf-8") as f: # Abrir archivo para escribir
+        f.write(CONFIG_UI["nombre_proyecto"] + "\n") # Título del proyecto
+        f.write(CONFIG_UI["institucion"] + "\n") # Nombre de la Institución
+        f.write("="*60 + "\n\n")
+        f.write("Resultados de medición de la unidad académica\n\n") # Encabezado
+        f.write(f"Área total: {area:.2f} m²\n") # Escribir resultado área
+        f.write(f"Perímetro total: {perimetro:.2f} m\n") # Escribir resultado perímetro
+        
+    print("\nGráfica generada correctamente.")
+    print(f"Imagen guardada en: {nombre_img}")
+    print(f"Reporte guardado en: {nombre_reporte}")
+
+if __name__ == "__main__":
+    Grafica_Medidas()
