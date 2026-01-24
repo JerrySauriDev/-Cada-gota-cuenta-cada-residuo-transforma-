@@ -66,11 +66,12 @@ def Grafica_puntos_pet():
     ax.set_xlim(-20, enfrente + 20) # Límites del eje X
     ax.set_ylim(-15, max(lat_der, lat_izq) + 15) # Límites del eje Y
     ax.set_aspect('equal') # Proporción igual
-    plt.title(f"Dimensiones de la unidad académica", pad=20, fontsize=14, fontweight='bold') # Título
+    plt.title(f"Puntos de Recolección.", pad=20, fontsize=14, fontweight='bold') # Título
     plt.grid(True, linestyle=':', alpha=0.6) # Cuadrícula
     plt.xlabel('Metros (X)') # Etiqueta eje X
     plt.ylabel('Metros (Y)') # Etiqueta eje Y
     plt.tight_layout() # Ajustar el diseño para evitar recortes
+    
     # Guardar la gráfica
     nombre_img = os.path.join(CARPETA_GRAFICAS, "Grafica_Puntos_PET.png") # Nombre del archivo de la imagen
     plt.savefig(nombre_img, dpi=400, bbox_inches='tight') # Guardar la imagen
