@@ -129,7 +129,7 @@ def verificar_descarte(volumen_piloto, area_captada, capacidad_m3):
     while True: 
         area_deseado = area_captada * descarte_mm_valor # m3 calculo modificado para el primer descarte de lluvia
         descarte_lluvia = volumen_piloto - area_deseado # m3 volumen utilizable con descarte de lluvia
-         # Calculo del porcentaje de capacidad del sistema construido con respecto al volumen utilizable con descarte
+        # Calculo del porcentaje de capacidad del sistema construido con respecto al volumen utilizable con descarte
         tienes_pocentaje = capacidad_m3 / descarte_lluvia * 100
         descarte_respuesta = input(f"¿Desea considerar el primer descarte de lluvia de 5 mm para limpieza del techo? (Si/No)\n")
         if descarte_respuesta == 'si' or descarte_respuesta == 'si':
@@ -165,7 +165,7 @@ def verificar_lluvia():
             f"Riego de plantas, Limpeza de salones y patio, Uso sanitario\n\n"
             f"Se debe dar mantenimiento al sistema; monitorearlo, limpiarlo, cambiar filtros, etc\n"
             f'"Condicion sana, buena eficiencia"')
-                                 
+
             break #Termina el bucle actual
         elif lluvia == 'no':
             print(f"\nEsperar a que llueva y poder monitorear.\n")
