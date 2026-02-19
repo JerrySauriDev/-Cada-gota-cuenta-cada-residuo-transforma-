@@ -1,7 +1,9 @@
 # Script para limpiar y transformar datos de lluvias mensuales de Chalco, Estado de México.
 import pandas as pd
+from Config_rutas import CARPETA_DATOS
+import os
 
-df = pd.read_csv('Datos_Mensuales_mm.csv') # Cargar los datos desde el archivo
+df = pd.read_csv(os.path.join(CARPETA_DATOS,'Datos_Mensuales_mm.csv')) # Cargar los datos desde el archivo
 print("\nDatos faltantes:") 
 print(df.isnull().sum()) # Verificar valores faltantes por columna
 
@@ -42,7 +44,7 @@ df.rename(columns=cambio_nombre_columnas, inplace=True) # Cambiar nombres de las
 meses_nuevos = list(nombres_completos.values()) # Actualizar las filas de estadísticas al final con los nuevos nombres de meses
 
 # Mostrar los datos transformados y guardar los datos limpios en un nuevo archivo CSV
-Nuevo_archivo = 'Datos_Mensuales_mm_validados.csv'
+Nuevo_archivo = os.path.join(CARPETA_DATOS,'Datos_Mensuales_mm_validados.csv')
 df.to_csv(Nuevo_archivo, index=False)
 print(f"\nDatos limpios y guardados en {Nuevo_archivo}")
 print("Datos transformados.")

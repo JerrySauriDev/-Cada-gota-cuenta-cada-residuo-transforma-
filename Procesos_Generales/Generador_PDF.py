@@ -172,4 +172,4 @@ En síntesis, SCALL convierte el análisis de datos ambientales en una herramien
 
     # Finalización
     doc.build(story)
-    print(f"\n[ÉXITO] Informe académico generado con datos actuales.")
+    print(f"\n📄 Informe académico generado con datos actuales.")

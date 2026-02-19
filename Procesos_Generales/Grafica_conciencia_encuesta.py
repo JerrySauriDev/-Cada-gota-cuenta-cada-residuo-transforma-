@@ -1,7 +1,8 @@
 import pandas as pd
+from Config_rutas import CARPETA_DATOS
 import os
 
-archivo_excel = 'Datos_Encuesta.xlsx'
+archivo_excel = os.path.join(CARPETA_DATOS,'Datos_Encuesta.xlsx')
 hoja_destino = 'Analisis_Conciencia'
 
 # Aquí definimos qué respuestas se consideran "Conciencia Ambiental" (1) y cuáles No (0).

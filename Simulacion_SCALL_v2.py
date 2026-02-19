@@ -90,9 +90,16 @@ class InterfazSCALL:
             "Volumen útil final": f"{util:.2f} m³",
             "Porcentaje de aprovechamiento": f"{porcentaje_sistema:.2f} %"
         }
-        
-        # Llamamos al PDF pasando los datos
-        generar_informe_completo(self.datos_finales)
+
+        if self.preguntar_si_no("\n¿Desea generar gráficas e informe final? (si/no): ") == "si":
+            print("----------------------------------------------")
+            print("    Generación de Gráficas e Infome Final")
+            generar_informe_completo(self.datos_finales) # Llamamos al PDF pasando los datos
+            print("                Finalizado")
+            print("----------------------------------------------")
+            print('\n"Adiós, vuelve pronto y recuerda:\n💧 Cada Gota Cuenta, Cada Residuo Transforma ♻️"')
+        else:
+            print('\n"Adiós, vuelve pronto y recuerda:\n💧 Cada Gota Cuenta, Cada Residuo Transforma ♻️"')
 
     # Métodos privados para limpiar el flujo principal
     def _seleccionar_porcentaje(self):

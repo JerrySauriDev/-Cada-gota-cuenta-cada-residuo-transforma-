@@ -1,12 +1,13 @@
 # Grafica_Encuesta.py
 # Este script lee un archivo Excel con datos de encuestas y genera gráficas de pastel para cada pregunta.
+from Config_rutas import CARPETA_DATOS, CARPETA_GRAFICAS
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import textwrap
 
 # Configuración inicial y constantes
-archivo_excel = 'Datos_Encuesta.xlsx' # Nombre del archivo Excel con los datos
+archivo_excel = os.path.join(CARPETA_DATOS,'Datos_Encuesta.xlsx') # Nombre del archivo Excel con los datos
 carpeta_destino = 'Graficas_Encuesta_de_cada_pregunta' # Carpeta donde se guardarán las gráficas
 TOTAL_ESPERADO = 44  # Total esperado de respuestas
 
