@@ -37,7 +37,7 @@ def Datos_Mensuales():
         yval = bar.get_height() # Altura de la barra
         if yval > 0: # Solo si el valor es mayor que 0
             plt.text(bar.get_x() + bar.get_width()/2, yval + 5, f'{yval:.0f}', 
-                     va='bottom', ha='center', rotation=90, fontsize=7, color='#444444') # Etiqueta encima de la barra
+                    va='bottom', ha='center', rotation=90, fontsize=7, color='#444444') # Etiqueta encima de la barra
 
     # Configuración visual
     ax = plt.gca() # Obtener el eje actual

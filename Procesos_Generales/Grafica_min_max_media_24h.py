@@ -19,7 +19,7 @@ def Grafica_24h():
 
     # Preparar los datos para la gráfica de máximas, medias y mínimas mensuales
     meses = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
-             'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE']
+            'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE']
 
     # Usamos .set_index('AÑO') para que sea más fácil localizar las filas por nombre
     df_stats = df.set_index('AÑO')
@@ -43,14 +43,14 @@ def Grafica_24h():
     for i in range(len(meses_etiquetas)): # Iterar sobre cada mes
         # Valor de Máxima (arriba del punto) 
         plt.text(i, Maxima.iloc[i] + (Maxima.max()*0.02), f'{Maxima.iloc[i]:.1f}',
-                 ha='left', va='bottom', color='#AC0A0A', fontweight='bold', fontsize=9, bbox=dict(facecolor='#fdfdfdef', edgecolor='none', pad=0.5))
+                ha='left', va='bottom', color='#AC0A0A', fontweight='bold', fontsize=9, bbox=dict(facecolor='#fdfdfdef', edgecolor='none', pad=0.5))
         # Valor de Media (arriba del punto)
         plt.text(i, Media.iloc[i] + (Maxima.max()*0.02), f'{Media.iloc[i]:.1f}', 
-                 ha='center', va='bottom', color='#0D995F', fontweight='bold', fontsize=9)
+                ha='center', va='bottom', color='#0D995F', fontweight='bold', fontsize=9)
         # Valor de Mínima (Solo si es > 0)
         if Minima.iloc[i] > 0.01:
             plt.text(i, Minima.iloc[i] - (Maxima.max()*0.03), f'{Minima.iloc[i]:.1f}', 
-                     ha='center', va='top', color='#005F85', fontweight='bold', fontsize=9)
+                    ha='center', va='top', color='#005F85', fontweight='bold', fontsize=9)
     
     # Configuración visual de la gráfica
     ax = plt.gca() # Obtener el eje actual

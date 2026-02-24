@@ -78,4 +78,4 @@ def Grafica_Mensual():
     plt.savefig(nombre_img, dpi=400, bbox_inches='tight') # Guardar la imagen
 
 if __name__ == "__main__":
-     Grafica_Mensual()
+    Grafica_Mensual()

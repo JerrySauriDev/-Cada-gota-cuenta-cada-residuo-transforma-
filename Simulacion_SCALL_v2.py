@@ -1,5 +1,5 @@
 import os
-import Motor_SCALL_v1 as MtSll
+import Procesos_Generales.Motor_SCALL_v1 as MtSll
 from Procesos_Generales.Generador_PDF import generar_informe_completo # El archivo que crearemos para el PDF
 
 class InterfazSCALL:

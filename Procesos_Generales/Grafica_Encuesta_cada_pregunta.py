@@ -52,10 +52,10 @@ try:
         etiquetas_leyenda = [f"{res}: {val} personas." for res, val in zip(respuestas, valores)] # Incluir ceros en la leyenda
         
         ax.legend(wedges, etiquetas_leyenda, # Etiquetas de la leyenda
-                  title=f"Muestra: {suma_actual}/{TOTAL_ESPERADO}", # Título de la leyenda con muestra actual y total esperado
-                  loc="center left", # Ajuste de posición de la leyenda
-                  bbox_to_anchor=(1, 0, 0.5, 1), # Ajuste de posición de la leyenda
-                  fontsize=10) # Ajuste de tamaño de fuente de la leyenda
+                title=f"Muestra: {suma_actual}/{TOTAL_ESPERADO}", # Título de la leyenda con muestra actual y total esperado
+                loc="center left", # Ajuste de posición de la leyenda
+                bbox_to_anchor=(1, 0, 0.5, 1), # Ajuste de posición de la leyenda
+                fontsize=10) # Ajuste de tamaño de fuente de la leyenda
 
         # Estilo del título y textos
         plt.title(pregunta_ajustada, fontsize=12, fontweight='bold', pad=2) # Título con la pregunta completa ajustada
